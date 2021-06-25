@@ -17,10 +17,14 @@ message User {
   string password = 3;
 }
 
+message ListUser {
+  repeated User users = 1;
+}
+
 service UserService {
   rpc CreateUser(CreateUserPayload) returns (User);
 
   rpc GetOneUser(GetOneUserPayload) returns (User);
   
-  rpc GetAllUsers(User) returns (stream User);
+  rpc GetAllUsers(User) returns (ListUser);
 }

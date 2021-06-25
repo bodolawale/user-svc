@@ -1,5 +1,6 @@
 import {
   User,
+  ListUser,
   CreateUserPayload,
   GetOneUserPayload,
 } from './../../generated_proto/user/user.service_pb';
@@ -22,7 +23,10 @@ export class UserController {
   }
 
   @GrpcMethod('UserService')
-  getAllUsers(data: GetOneUserPayload.AsObject): Promise<User.AsObject[]> {
-    return this.userService.getAllUsers();
+  async getAllUsers(data: GetOneUserPayload.AsObject): Promise<any> {
+    console.log(data);
+    const dat = await this.userService.getAllUsers();
+    console.log(dat);
+    return dat;
   }
 }

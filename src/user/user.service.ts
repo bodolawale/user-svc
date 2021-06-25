@@ -28,7 +28,8 @@ export class UserService {
     return this.userRepository.findOne({ where: { id: data.id } });
   }
 
-  async getAllUsers(): Promise<User.AsObject[]> {
-    return this.userRepository.find();
+  async getAllUsers(): Promise<{ users: User.AsObject[] }> {
+    const users = await this.userRepository.find({});
+    return { users };
   }
 }
