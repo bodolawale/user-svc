@@ -2,8 +2,17 @@ syntax = "proto3";
 
 package user;
 
-import "user/user.proto";
+message CreateUserPayload {
+  string email = 1;
+  string password = 2;
+}
+
+message CreateUserResponse {
+  int32 id = 1;
+  string email = 2;
+  string password = 3;
+}
 
 service UserService {
-  rpc Login(user.CreateUserPayload) returns (user.CreateUserResponse);
+  rpc CreateUser(CreateUserPayload) returns (CreateUserResponse);
 }
