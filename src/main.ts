@@ -12,9 +12,9 @@ async function bootstrap() {
       url: `localhost:${process.env.GRPC_PORT}`,
     },
   };
+
   const app = await NestFactory.create(AppModule);
   app.connectMicroservice(grcpOptions);
-
   await app.startAllMicroservicesAsync();
   await app.listen(process.env.HTTP_PORT);
 }
