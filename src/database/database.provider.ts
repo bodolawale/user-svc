@@ -28,7 +28,7 @@ export const databaseProviders: Provider[] = [
         password: process.env.PG_PASSWORD,
         database: process.env.PG_DATABASE,
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-        synchronize: true,
+        synchronize: false,
       }),
   },
 ];
