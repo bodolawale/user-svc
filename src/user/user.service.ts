@@ -1,32 +1,34 @@
-import { Metadata } from 'grpc';
 import {
+  GetOneUserPayload,
   CreateUserPayload,
-  CreateUserResponse,
-} from './../../generated_proto/user/user_pb.d';
+  User,
+} from './../../generated_proto/user/user.service_pb.d';
+import { Metadata } from 'grpc';
 import { Injectable } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
-import { User } from './user.entity';
+import { User as UserEntity } from './user.entity';
 
 @Injectable()
 export class UserService {
-  private readonly userRepository: Repository<User>;
+  private readonly userRepository: Repository<UserEntity>;
   constructor(
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {
-    this.userRepository = entityManager.getRepository(User);
+    this.userRepository = entityManager.getRepository(UserEntity);
   }
 
-  async createUser(
-    data: CreateUserPayload.AsObject,
-    metadata: Metadata,
-  ): Promise<CreateUserResponse.AsObject> {
+  async createUser(data: CreateUserPayload.AsObject): Promise<User.AsObject> {
     const user = this.userRepository.create(data);
     await this.userRepository.save(user);
     return user;
   }
 
-  async getAllUsers(): Promise<any> {
+  async fetchUser(data: GetOneUserPayload.AsObject): Promise<User.AsObject> {
+    return this.userRepository.findOne({ where: { id: data.id } });
+  }
+
+  async getAllUsers(): Promise<User.AsObject[]> {
     return this.userRepository.find();
   }
 }

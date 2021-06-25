@@ -1,21 +1,28 @@
-import { UserService } from './user.service';
 import {
-  CreateUserResponse,
+  User,
   CreateUserPayload,
-} from './../../generated_proto/user/user_pb';
+  GetOneUserPayload,
+} from './../../generated_proto/user/user.service_pb';
+import { UserService } from './user.service';
 import { Controller, Inject } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { Metadata } from 'grpc';
 
 @Controller('user')
 export class UserController {
   constructor(@Inject(UserService) private readonly userService: UserService) {}
 
   @GrpcMethod('UserService')
-  createUser(
-    body: CreateUserPayload.AsObject,
-    metadata: Metadata,
-  ): Promise<CreateUserResponse.AsObject> {
-    return this.userService.createUser(body, metadata);
+  createUser(body: CreateUserPayload.AsObject): Promise<User.AsObject> {
+    return this.userService.createUser(body);
+  }
+
+  @GrpcMethod('UserService')
+  getOneUser(data: GetOneUserPayload.AsObject): Promise<User.AsObject> {
+    return this.userService.fetchUser(data);
+  }
+
+  @GrpcMethod('UserService')
+  getAllUsers(data: GetOneUserPayload.AsObject): Promise<User.AsObject[]> {
+    return this.userService.getAllUsers();
   }
 }
