@@ -3,20 +3,30 @@ import {
   CreateUserPayload,
   CreateUserResponse,
 } from './../../generated_proto/user/user_pb.d';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectEntityManager } from '@nestjs/typeorm';
+import { EntityManager, Repository } from 'typeorm';
+import { User } from './user.entity';
 
 @Injectable()
 export class UserService {
-  // constructor() {}
+  private readonly userRepository: Repository<User>;
+  constructor(
+    @InjectEntityManager() private readonly entityManager: EntityManager,
+  ) {
+    this.userRepository = entityManager.getRepository(User);
+  }
 
   async createUser(
     data: CreateUserPayload.AsObject,
     metadata: Metadata,
   ): Promise<CreateUserResponse.AsObject> {
-    return {
-      id: 1,
-      email: data.email,
-      password: data.password,
-    };
+    const user = this.userRepository.create(data);
+    await this.userRepository.save(user);
+    return user;
+  }
+
+  async getAllUsers(): Promise<any> {
+    return this.userRepository.find();
   }
 }
