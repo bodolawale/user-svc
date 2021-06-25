@@ -1,9 +1,24 @@
+import { FactoryProvider } from '@nestjs/common';
 import { Provider } from '@nestjs/common';
-import { createConnection } from 'typeorm';
+import { Connection, createConnection, EntityManager } from 'typeorm';
+
+function onModuleDestroy<T extends Record<string, any>>(
+  thing: T,
+  callback: (thing: T) => Promise<void>,
+): T {
+  return new Proxy<T>(thing, {
+    get(target: T, property: PropertyKey) {
+      if (property === 'onModuleDestroy') {
+        return () => callback(thing);
+      }
+      return target[property as keyof T];
+    },
+  });
+}
 
 export const databaseProviders: Provider[] = [
   {
-    provide: 'POSTGRES_DB',
+    provide: Connection,
     useFactory: async () =>
       await createConnection({
         type: 'postgres',
@@ -17,3 +32,15 @@ export const databaseProviders: Provider[] = [
       }),
   },
 ];
+
+export const entityManagerProvider: FactoryProvider = {
+  provide: EntityManager,
+  useFactory: async (cxn: Connection) => {
+    if (!cxn.isConnected) {
+      await cxn.connect();
+    }
+    const manager = cxn.createEntityManager();
+    return onModuleDestroy(manager, (m) => m.release());
+  },
+  inject: [Connection],
+};
