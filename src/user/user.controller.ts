@@ -24,9 +24,7 @@ export class UserController {
 
   @GrpcMethod('UserService')
   async getAllUsers(data: GetOneUserPayload.AsObject): Promise<any> {
-    console.log(data);
     const dat = await this.userService.getAllUsers();
-    console.log(dat);
     return dat;
   }
 }

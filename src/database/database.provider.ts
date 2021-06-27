@@ -29,6 +29,9 @@ export const databaseProviders: Provider[] = [
         database: process.env.PG_DATABASE,
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         synchronize: false,
+        cli: {
+          migrationsDir: process.env.TYPEORM_MIGRATIONS_DIR,
+        },
       }),
   },
 ];

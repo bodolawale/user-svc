@@ -1,7 +1,3 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
-
 module.exports = {
   type: 'postgres',
   host: process.env.PG_HOST,
